@@ -122,7 +122,7 @@ $flagDecBin=0;
 $flagBinDec=0;
 $flagValue=0;
 $value="";
-$Version="1.0 10/06/2020";
+$Version="1.1 12/06/2020";
 
 #End Declarative 
 
@@ -189,8 +189,10 @@ if ( ($flagHexAscii eq 1 || $flagHexBin eq 1 || $flagHexDec eq 1) && length($val
 for($iInd=0;$iInd<length($value);$iInd++) {
   if ( (ord(substr($value, $iInd, 1)) < 48 || ord(substr($value, $iInd, 1)) > 57) ) {
      if ( $flagDecHex eq 1 || $flagDecBin eq 1 ) {
-        printf("\n ### ERROR ### Value specified to translate not in decimal format.\n\n\n");
-        exit 1;
+        if ( (ord(substr($value, $iInd, 1)) != 45 && ord(substr($value, $iInd, 1)) != 43) ) {
+           printf("\n ### ERROR ### Value specified to translate not in decimal format.\n\n\n");
+           exit 1;
+        }
      }
      if ( (ord(substr($value, $iInd, 1)) < 97 || ord(substr($value, $iInd, 1)) > 102) &&
           (ord(substr($value, $iInd, 1)) < 65 || ord(substr($value, $iInd, 1)) > 70) && 
