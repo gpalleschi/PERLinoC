@@ -88,6 +88,12 @@ sub dataConvert {
 
 # End Function to convert hex value 
 sub help {
+    print "\n\n";
+    print " ____  _____ ____  _     _              ____\n";
+    print "|  _  | ____|  _ \\| |   (_)_ __   ___  / ___|\n";
+    print "| |_) |  _| | |_) | |   | | '_ \\ / _ \\| |\n";
+    print "|  __/| |___|  _ <| |___| | | | | (_) | |___\n";
+    print "|_|   |_____|_| \\_\\_____|_|_| |_|\\___/ \\____|\n";
     print "\n\nPERLinoC.pl version $Version\n\n";
     print "Use: PERLinoC.pl <Type Conv> <Value To Conv>\n\n";
     print "[...] are optional parameters\n\n";
@@ -122,7 +128,7 @@ $flagDecBin=0;
 $flagBinDec=0;
 $flagValue=0;
 $value="";
-$Version="1.1 12/06/2020";
+$Version="1.2 18/03/2021";
 
 #End Declarative 
 
