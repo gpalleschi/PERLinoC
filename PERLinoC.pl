@@ -128,7 +128,7 @@ $flagDecBin=0;
 $flagBinDec=0;
 $flagValue=0;
 $value="";
-$Version="1.2 18/03/2021";
+$Version="1.2 20/03/2021";
 
 #End Declarative 
 
