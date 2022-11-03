@@ -3,7 +3,7 @@
 use bigint;
 
 #
-# GPSoft - Giovanni Palleschi - 2020 PERLinoC.pl Simple Utility to conversion Hex to Dec, Dec to Hex, Ascii to Hex, Hex to Ascii, Bin to Hex and Hex to Bin
+# GPSoft - Giovanni Palleschi - 2020-2022 PERLinoC.pl Simple Utility to conversion Hex to Dec, Dec to Hex, Ascii to Hex, Hex to Ascii, Bin to Hex and Hex to Bin, roman numero to decimal, decimal to roman number
 #
 # perl PERLinoC.pl [options]
 #
@@ -27,6 +27,78 @@ use bigint;
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #Start Declarative 
+@RN = ("I","IV","V","IX","X","XL","L","XC","C","CD","D","CM","M");
+@VRN = (1,4,5,9,10,40,50,90,100,400,500,900,1000);
+$TOTRN = 12;
+
+sub decimalToRoman {
+    my ($number) = @_;
+    $ind = $TOTRN;
+    $retRN = "";
+
+    while ( $number > 0 ) {
+      $div = int($number/$VRN[$ind]);
+      $number = $number%$VRN[$ind];
+      while ( $div ) {
+	$retRN = $retRN . $RN[$ind];
+	$div = $div - 1;
+      }
+      $ind = $ind - 1;
+    }
+
+    return $retRN;
+}
+
+
+sub romanToDecimal {
+    my ($cpRN) = @_;
+
+    $lenRN = length($cpRN);
+    $retDEC = 0;
+
+    for ( $ind=0; $ind < $lenRN; $ind++ ) {
+#      printf("\n %d : %s \n", $ind, substr($cpRN, $ind, 1));
+      if ( substr($cpRN, $ind, 1) eq 'I' ) {
+        $retDEC = $retDEC + 1;
+      }
+      if ( substr($cpRN, $ind, 1) eq 'V' ) { 
+        $retDEC = $retDEC + 5;
+      }
+      if ( substr($cpRN, $ind, 1) eq 'X' ) { 
+        $retDEC = $retDEC + 10;
+      }
+      if ( substr($cpRN, $ind, 1) eq 'L' ) { 
+        $retDEC = $retDEC + 50;
+      }
+      if ( substr($cpRN, $ind, 1) eq 'C' ) { 
+        $retDEC = $retDEC + 100;
+      }
+      if ( substr($cpRN, $ind, 1) eq 'D' ) { 
+        $retDEC = $retDEC + 500;
+      }
+      if ( substr($cpRN, $ind, 1) eq 'M' ) { 
+        $retDEC = $retDEC + 1000;
+      }
+
+      if ( $ind > 0 ) {
+
+         if ( (( substr($cpRN, $ind, 1) eq 'V') or ( substr($cpRN, $ind, 1) eq 'X')) && ( substr($cpRN, $ind-1, 1) eq 'I') ) {
+            $retDEC -= 1 + 1;
+         }
+
+         if ( (( substr($cpRN, $ind, 1) eq 'L') or ( substr($cpRN, $ind, 1) eq 'C')) && ( substr($cpRN, $ind-1, 1) eq 'X') ) {
+            $retDEC -= 10 + 10;
+         }
+
+         if ( (( substr($cpRN, $ind, 1) eq 'D') or ( substr($cpRN, $ind, 1) eq 'M')) && ( substr($cpRN, $ind-1, 1) eq 'C') ) {
+            $retDEC -= 100 + 100;
+         }
+      }
+
+    } 
+
+    return $retDEC;
+}
 
 # Start Function to convert values
 sub dataConvert {
@@ -38,11 +110,11 @@ sub dataConvert {
      $valueConv = pack("H*", $hexvalue);
   }
 # Hex to Binary
-  if ( $type eq 'B' ) {
+  elsif ( $type eq 'B' ) {
      $valueConv = unpack("B*", pack("H*", $hexvalue));
   }
 # Hex to Number
-  if ( $type eq 'N' ) {
+  elsif ( $type eq 'N' ) {
      #Check if number is Negative or Positive
      $valueConv = unpack("B*", pack("H*", $hexvalue));
      $signBit = substr($valueConv, 0, 1);
@@ -67,11 +139,11 @@ sub dataConvert {
      }   
   }
 # Hex 
-  if ( $type eq 'H' ) {
+  elsif ( $type eq 'H' ) {
      $valueConv = $hexvalue;
   }
 # Binary To Decimal
-  if ( $type eq 'D' ) {
+  elsif ( $type eq 'D' ) {
      $valueDec=0;
      $indExp=0;
      # hexvalue in this case is in binary format
@@ -97,7 +169,7 @@ sub help {
     print "\n\nPERLinoC.pl version $Version\n\n";
     print "Use: PERLinoC.pl <Type Conv> <Value To Conv>\n\n";
     print "[...] are optional parameters\n\n";
-    print "<Type Conv>     : Conversion Type to apply, values permitted are : \n";
+    print "<Type Conv>     : Conversion Type to apply, values permitted are : \n\n";
     print "                  -hd : Hex to Decimal\n";
     print "                  -dh : Decimal to Hex\n";
     print "                  -ah : Ascii to Hex\n";
@@ -105,7 +177,9 @@ sub help {
     print "                  -bh : Binary to Hex\n";
     print "                  -hb : Hex to Binary\n";
     print "                  -bd : Binary to Decimal\n";
-    print "                  -db : Decimal to Binary\n\n";
+    print "                  -db : Decimal to Binary\n";
+    print "                  -rd : Roman to Decimal\n";
+    print "                  -dr : Decimal to Roman\n\n";
     print "<Value To Conv> : Value to Convert\n\n";
     print "Examples : \n\n";
     print "\tPERLinoC.pl -hd a0ef\n\n";
@@ -126,9 +200,11 @@ $flagBinHex=0;
 $flagHexBin=0;
 $flagDecBin=0;
 $flagBinDec=0;
+$flagRomDec=0;
+$flagDecRom=0;
 $flagValue=0;
 $value="";
-$Version="1.3 20/03/2021";
+$Version="1.4 02/11/2022";
 
 #End Declarative 
 
@@ -169,13 +245,19 @@ elsif ( substr($ARGV[0],0,3) eq "-bd" ) {
 elsif ( substr($ARGV[0],0,3) eq "-db" ) {
    $flagDecBin=1;
 }
+elsif ( substr($ARGV[0],0,3) eq "-rd" ) {
+   $flagRomDec=1;
+}
+elsif ( substr($ARGV[0],0,3) eq "-dr" ) {
+   $flagDecRom=1;
+}
 else {
    printf("\n\n ### ERROR ### Specified a convertion parameter '$ARGV[0]' not permitted.\n\n\n");
    exit 1;
 }
 $value = $ARGV[1];
 
-$total = $flagHexDec + $flagDecHex + $flagAsciiHex + $flagHexAscii + $flagBinHex + $flagHexBin + $flagValue + $flagDecBin + $flagBinDec;
+$total = $flagHexDec + $flagDecHex + $flagAsciiHex + $flagHexAscii + $flagBinHex + $flagHexBin + $flagValue + $flagDecBin + $flagBinDec + $flagDecRom + $flagRomDec;
 if ( $total eq 0 ) {
    printf("\n\n ### ERROR ### Not Specified conversation parameters.\n\n\n");
    exit 1;
@@ -194,7 +276,7 @@ if ( ($flagHexAscii eq 1 || $flagHexBin eq 1 || $flagHexDec eq 1) && length($val
 #CONTROLS
 for($iInd=0;$iInd<length($value);$iInd++) {
   if ( (ord(substr($value, $iInd, 1)) < 48 || ord(substr($value, $iInd, 1)) > 57) ) {
-     if ( $flagDecHex eq 1 || $flagDecBin eq 1 ) {
+     if ( $flagDecHex eq 1 || $flagDecBin eq 1 || $flagDecRom eq 1 ) {
         if ( (ord(substr($value, $iInd, 1)) != 45 && ord(substr($value, $iInd, 1)) != 43) ) {
            printf("\n ### ERROR ### Value specified to translate not in decimal format.\n\n\n");
            exit 1;
@@ -204,6 +286,13 @@ for($iInd=0;$iInd<length($value);$iInd++) {
           (ord(substr($value, $iInd, 1)) < 65 || ord(substr($value, $iInd, 1)) > 70) && 
           ($flagHexAscii eq 1 || $flagHexBin eq 1 || $flagHexDec eq 1) ) {
         printf("\n ### ERROR ### Value specified to translate not in hex format.\n\n\n");
+        exit 1;
+     }
+     if ( ord(substr($value, $iInd, 1)) != 73 && ord(substr($value, $iInd, 1)) != 86 &&
+          ord(substr($value, $iInd, 1)) != 88 && ord(substr($value, $iInd, 1)) != 76 &&
+          ord(substr($value, $iInd, 1)) != 67 && ord(substr($value, $iInd, 1)) != 68 &&
+          ord(substr($value, $iInd, 1)) != 77 && $flagRomDec eq 1 ) {
+        printf("\n ### ERROR ### Value specified to translate not in roman format values acepted are (I,V,X,L,C,D,M).\n\n\n");
         exit 1;
      }
   }
@@ -265,5 +354,19 @@ if ( $flagDecBin eq 1 ) {
     $hexvalue = sprintf "%x", $value;
     $datoConvToDisplay = dataConvert($hexvalue,'B');
     printf("\n\n Decimal '%s' ---> Binary '%s'\n\n\n", $value, $datoConvToDisplay);
+    exit 0 ;
+}
+
+#Decimal to Roman
+if ( $flagDecRom eq 1 ) {
+    $datoConvToDisplay = decimalToRoman($value);
+    printf("\n\n Decimal '%s' ---> Roman '%s'\n\n\n", $value, $datoConvToDisplay);
+    exit 0 ;
+}
+
+#Roman to Decimal
+if ( $flagRomDec eq 1 ) {
+    $datoConvToDisplay = romanToDecimal($value);
+    printf("\n\n Roman '%s' ---> Decimal '%d'\n\n\n", $value, $datoConvToDisplay);
     exit 0 ;
 }
