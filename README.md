@@ -13,7 +13,9 @@ Use: PERLinoC.pl \<Type Conv\> \<Value To Conv\>
     -bh : Binary to Hex
     -hb : Hex to Binary
     -bd : Binary to Decimal
-    -db : Decimal to Binary
+    -db : Decimal to Binary  
+    -rd : Roman to Decimal
+    -dr : Decimal to Roman  
   
 \<Value To Conv\> : Value to Convert
   
