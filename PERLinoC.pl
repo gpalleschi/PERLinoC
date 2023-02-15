@@ -204,7 +204,7 @@ $flagRomDec=0;
 $flagDecRom=0;
 $flagValue=0;
 $value="";
-$Version="1.4 02/11/2022";
+$Version="1.5 15/02/2023";
 
 #End Declarative 
 
@@ -352,6 +352,10 @@ if ( $flagBinDec eq 1 ) {
 #Decimal to Binary
 if ( $flagDecBin eq 1 ) {
     $hexvalue = sprintf "%x", $value;
+    $size = length $hexvalue;
+    if ( $size%2 ) {
+      $hexvalue = "0" . $hexvalue;
+    }
     $datoConvToDisplay = dataConvert($hexvalue,'B');
     printf("\n\n Decimal '%s' ---> Binary '%s'\n\n\n", $value, $datoConvToDisplay);
     exit 0 ;
